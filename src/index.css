@@ -6,3 +6,7 @@ body {
     @apply bg-[rgba(25,25,25,1)];
     @apply text-white;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
