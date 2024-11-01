@@ -12,6 +12,7 @@ const App = () => {
   const [isEditingTask, setIsEditingTask] = useState(null)
   const [tasks, setTasks] = useState([])
   const [filter, setFilter] = useState('all')
+  const [searchTerm, setSearchTerm] = useState('')
 
   // load tasks from local storage
   const loadTasks = () => {
@@ -78,6 +79,27 @@ const App = () => {
     }
   }
 
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value.toLowerCase())
+  }
+
+  /**
+   * Filters tasks based on the current search term and the current filter state.
+   *
+   * @returns {Array} A list of tasks that contain the search term in either the title or description
+   *                  and match the current filter state.
+   */
+  const filteredTasksBySearch = () => {
+    if (searchTerm === '') {
+      return filteredTasks();
+    }
+    return filteredTasks().filter(task => {
+      const title = task.title.toLowerCase()
+      const description = task.description.toLowerCase()
+      return title.includes(searchTerm) || description.includes(searchTerm)
+    })
+  }
+
   return (<>
     {isEditingTask && <EditTask isOpen={isEditingTask} onClose={() => setIsEditingTask(null)} onSave={handleSave} tasks={tasks.find(task => task.id === isEditingTask)} />}
     <NewTask isOpen={isNewTask} onClose={() => setIsNewTask(false)} onSave={(newTask) => {
@@ -89,7 +111,7 @@ const App = () => {
     }} />
     <nav className=' flex justify-between items-center m-10'>
       <Logo />
-      <SearchBar />
+      <SearchBar value={searchTerm} onSearch={handleSearch} />
       <SiginBtn />
     </nav>
 
@@ -105,10 +127,10 @@ const App = () => {
         </select>
       </div>
       <div className='flex flex-col gap-4 h-4/5 overflow-hidden overflow-y-scroll scrollbar-hide'>
-        {filteredTasks().length === 0 ? (
+        {filteredTasksBySearch().length === 0 ? (
           <p className='text-center text-xl text-gray-500 mt-32'>Nothing to show here</p>
         ) : (
-          filteredTasks().map(task => (
+          filteredTasksBySearch().map(task => (
             <TaskCard
               key={task.id}
               title={task.title}
