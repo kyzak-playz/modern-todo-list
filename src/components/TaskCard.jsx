@@ -1,11 +1,24 @@
 import React from 'react'
 
-const TaskCard = ({title, description, onDelete, onEdit}) => {
+const TaskCard = ({title, description, onDelete, onEdit, status, id, filter}) => {
+    const [isChecked, setIsChecked] = React.useState(status === 'pending' ? false : true)
+
+    const handleCheckboxChange = (event) => {
+        const updatedStatus = event.target.checked ? 'completed' : 'pending';
+        
+        // Update status in localStorage
+        const updatedTasks = JSON.parse(localStorage.getItem('tasks')).map(task => 
+            task.id === id ? { ...task, status: updatedStatus } : task
+        );
+        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        
+        setIsChecked(event.target.checked);
+    }
     
     return (
         <div className="flex justify-between items-center bg-black/50 p-4 rounded-xl">
             <div className="flex items-center">
-                <input type="checkbox" className="mr-4" />
+                <input type="checkbox" className="mr-4" checked={isChecked} onChange={handleCheckboxChange} disabled={filter !== 'all'} />
                 <div>
                     <h3 className="text-lg font-bold">{title}</h3>
                     <p className="text-sm">{description}</p>
@@ -28,5 +41,4 @@ const TaskCard = ({title, description, onDelete, onEdit}) => {
 }
 
 export default TaskCard
-
 

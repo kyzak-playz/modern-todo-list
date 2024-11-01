@@ -9,6 +9,7 @@ const EditTask = ({tasks, onSave, onClose}) => {
             id: Date.now(),
             title,
             description,
+            status: tasks.status,
             oldId: tasks.id
         })
     }

@@ -33,7 +33,7 @@ const NewTask = ({ isOpen, onClose, onSave }) => {
                     className="w-full mb-2 p-2 border-[1px] border-gray-600 rounded bg-black focus:outline-none"
                 />
                 <div className="flex justify-end gap-2">
-                    <button onClick={() => onSave({ title, description, id: Date.now() })} className="bg-blue-600 text-white p-2 rounded">
+                    <button onClick={() => onSave({ title, description, id: Date.now(), status: "pending" })} className="bg-blue-600 text-white p-2 rounded">
                         Save
                     </button>
                     <button onClick={onClose} className="bg-gray-600 text-white p-2 rounded">
