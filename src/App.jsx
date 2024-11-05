@@ -17,7 +17,6 @@ const App = () => {
   // load tasks from local storage
   const loadTasks = () => {
     const tasks = localStorage.getItem('tasks')
-    console.log(JSON.parse(tasks))
     return tasks ? JSON.parse(tasks) : []
   }
 
