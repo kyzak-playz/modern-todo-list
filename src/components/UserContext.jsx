@@ -29,6 +29,13 @@ const UserProvider = ({ children }) => {
     )
 }
 
+/**
+ * useUser hook
+ * 
+ * Returns the user context.
+ * 
+ * @returns {object | null} The user context, or null if it is not available.
+ */
 const useUser = () => {
     const context = useContext(UserContext);
     return context || null;

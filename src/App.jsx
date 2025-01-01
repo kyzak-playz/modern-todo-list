@@ -60,14 +60,14 @@ const App = () => {
     setTasksUpdated(true)
   }
 
-/**
- * Filters tasks based on the current filter state.
- *
- * @returns {Array} A list of tasks filtered by the specified status.
- *                  If the filter is 'all', returns all tasks.
- *                  If the filter is 'completed', returns only tasks with status 'completed'.
- *                  If the filter is 'pending', returns only tasks with status 'pending'.
- */
+  /**
+   * Filters tasks based on the current filter state.
+   *
+   * @returns {Array} A list of tasks filtered by the specified status.
+   *                  If the filter is 'all', returns all tasks.
+   *                  If the filter is 'completed', returns only tasks with status 'completed'.
+   *                  If the filter is 'pending', returns only tasks with status 'pending'.
+   */
   const filteredTasks = () => {
     if (filter === 'all') {
       return tasks;

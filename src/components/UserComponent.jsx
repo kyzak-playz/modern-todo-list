@@ -20,8 +20,8 @@ const UserComponent = () => {
 
     const handleLogout = () => {
         console.log('Logging out...')
-        // localStorage.removeItem('user')
-        // window.location.reload()
+        localStorage.removeItem('user')
+        window.location.reload()
     }
 
     const handlePass = () => {

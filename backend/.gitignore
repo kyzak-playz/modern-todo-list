@@ -1,0 +1,12 @@
+# fastapi files
+__pycache__
+
+# python files
+.venv
+tempCodeRunnerFile.py
+
+# Generic details
+database_details.txt
+
+# Static files
+static

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="image/png" sizes="16x16" rel="icon" href="https://img.icons8.com/?size=100&id=107272&format=png&color=ffffff">
+    <title>Forbidden</title>
+</head>
+<style>
+    body{
+        background-color: #1e293b;
+    }
+    div{
+        display: flex;
+        margin-top: 15rem;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    h1{
+        font-size: 2rem;
+        font-weight: 500;
+        text-align: center;
+    }
+    p{
+        font-size: 2rem;
+        display: none;
+        background-color: #526e91;
+        color: rgb(59, 51, 51);
+        font-weight: 500;
+        text-align: center;
+        border: 1px solid black;
+        padding: 0.2rem 3rem;
+        border-radius: 15px;
+    }
+</style>
+<body>
+    <div>
+        <h1 id="heading">This is for you forbidden user</h1>
+        <p id="counter"></p>
+
+    </div>
+    <script>
+        const count = document.getElementById("counter")
+        const heading = document.getElementById("heading")
+        setTimeout(function(){
+            window.location.href = "https://www.youtube.com/watch?v=E4WlUXrJgy4&t=1s";
+        }, 5000);
+        var counter = 5;
+        var dot = 0
+        setInterval(function() {
+            dot++
+            if (dot == 1) {
+                heading.innerHTML = "This is for you forbidden user";
+            } else if (dot == 2) {
+                heading.innerHTML = "This is for you forbidden user.";
+            } else if (dot == 3) {
+                heading.innerHTML = "This is for you forbidden user..";
+            } else if (dot == 4) {
+                heading.innerHTML = "This is for you forbidden user...";
+            } else {
+                heading.innerHTML = "This is for you forbidden user";
+                dot = 0;
+            }
+            counter--
+            count.style.display = "block";
+            count.innerHTML = counter;
+        }, 1000);
+    </script>
+</body>
+</html>
+
