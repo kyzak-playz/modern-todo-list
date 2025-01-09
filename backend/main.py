@@ -7,6 +7,7 @@ from fastapi import (
     Response,
     status,
     Form,
+    Body,
     Query,
     Depends,
     HTTPException,
@@ -21,7 +22,7 @@ from utility.token import create_access_token, verify_password, get_password_has
 from pydantic import BaseModel
 from datetime import timedelta
 from time import sleep
-from dB.connection import MongoDBConnection, User
+from dB.connection import MongoDBConnection, User, Task
 from dotenv import load_dotenv
 import os
 
@@ -66,6 +67,8 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: str
 
+
+    
 
 class FormData(BaseModel):
     old_password: str | None = None
@@ -178,7 +181,6 @@ async def login_post(form_data: Annotated[OAuth2PasswordRequestForm, Depends()])
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-
 @app.get("/change-password/", response_class=HTMLResponse)
 async def change_password_get(
     request: Request, token: Annotated[str, Query()]
@@ -274,3 +276,21 @@ def check_db(user:Annotated[User, Depends(get_current_user)], request: Request):
 def dummy(email: Annotated[str, Form()], password: Annotated[str, Form()]):
     print(email, password)
     return {"message": "Hello World"}
+
+
+@app.post("/sync-tasks")
+def syncTasks(user: Annotated[User, Depends(get_current_user)], tasks: Annotated[list[Task], Body()], request: Request):
+    if user.role == "forbid": 
+        return templates.TemplateResponse("forbid.html", {"request": request})
+    dbTasks = db.getTasks(user.username)
+    if dbTasks != tasks:
+        acknowledgement = db.syncTasks(tasks, username=user.username)
+        if acknowledgement:
+            return status.HTTP_200_OK
+        else:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to sync tasks")
+    return status.HTTP_200_OK
+
+
+
+

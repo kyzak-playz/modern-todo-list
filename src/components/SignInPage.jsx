@@ -1,24 +1,54 @@
 import React from 'react'
 
+/**
+ * Extracts and returns a token object from the API response.
+ *
+ * @param {Response} response - The response object from the API call.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the token type and access token.
+ */
 
-const SignInPage = ({onExit, checkLoggedIn}) => {
+const tokenExtract = async (response)=> {
+    const token = await response.json()
+    const tokenObject = {
+        token_type: token.token_type,
+        access_token: token.access_token
+    }
+    return tokenObject
+}
+
+const SignInPage = ({ onExit, checkLoggedIn }) => {
     const handleSubmit = async (event) => {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
-        const username = data.get('username')
-        const password = data.get('password')
 
+        // create up new user
         const response = await fetch("http://127.0.0.1:8000/sign_up", {
             method: "POST",
             body: data,
         })
 
-        if (response.status !== 200) {
-            alert("Something went wrong")
-            return
+        // if user already exist then login
+        if (response.status === 409) {
+            console.log("user already exist now trying to log in.....")
+            const response = await fetch("http://127.0.0.1:8000/login", {
+                method: "POST",
+                body: data,
+            })
+            
+            // get new session token for login
+            const tokenObject = await tokenExtract(response)
+            sessionStorage.setItem('userToken', JSON.stringify(tokenObject));
+            sessionStorage.setItem('username', JSON.stringify(data.get('username')));
         }
-        const token = await response.json()
-        localStorage.setItem('user', JSON.stringify({ username, password }))
+
+        // get new session token for new user
+        if (response.status == 200) {
+            const tokenObject = await tokenExtract(response)
+            sessionStorage.setItem('userToken', JSON.stringify(tokenObject));
+            sessionStorage.setItem('username', JSON.stringify(data.get('username')));
+        }
+
+        // wait 3 seconds and close sign in page
         setTimeout(() => {
             onExit()
             checkLoggedIn()

@@ -16,7 +16,7 @@ const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null)
 
     useEffect(() => {
-        const userString = localStorage.getItem('user')
+        const userString = sessionStorage.getItem('username')
         if (userString) {
             setUser(JSON.parse(userString))
         }

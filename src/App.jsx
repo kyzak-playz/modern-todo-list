@@ -28,6 +28,8 @@ const App = () => {
       const loadedTasks = loadTasks()
       setTasks(loadedTasks)
     }
+    console.log(tasks)
+    
   }, [tasksUpdated, filter])
 
 
