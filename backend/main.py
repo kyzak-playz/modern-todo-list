@@ -264,6 +264,19 @@ async def change_password(data: Annotated[FormData, Form()], response: Response,
 
 @app.get("/check-db")
 def check_db(user:Annotated[User, Depends(get_current_user)], request: Request):
+    """
+    Checks the status of the database connection.
+
+    Args:
+        user (User): The User object containing the user's information.
+        request (Request): The request object containing information about the request.
+
+    Returns:
+        dict: A dictionary containing a list of databases in the MongoDB connection.
+
+    Raises:
+        HTTPException: If the user is forbidden or if there is a server error.
+    """
     if user.role == "forbid": 
         return templates.TemplateResponse("forbid.html", {"request": request})
     if user.role != "admin":
@@ -272,25 +285,54 @@ def check_db(user:Annotated[User, Depends(get_current_user)], request: Request):
     return {"databases": stats_db}
 
 
-@app.post("/dummy")
-def dummy(email: Annotated[str, Form()], password: Annotated[str, Form()]):
-    print(email, password)
-    return {"message": "Hello World"}
-
-
 @app.post("/sync-tasks")
 def syncTasks(user: Annotated[User, Depends(get_current_user)], tasks: Annotated[list[Task], Body()], request: Request):
+    """
+    Syncs the tasks in the database with the given list of tasks.
+
+    If the tasks in the database and the given list of tasks are not the same, it syncs the tasks by calling the `syncTasks` method of the `MongoDBConnection` class.
+
+    Args:
+        user (User): The User object containing the user's information.
+        tasks (list[Task]): The list of Task objects to be synced with the database.
+        request (Request): The request object containing information about the request.
+
+    Returns:
+        dict: A dictionary containing a success message and the status code of the response.
+
+    Raises:
+        HTTPException: If the user is forbidden or if there is a server error.
+    """
     if user.role == "forbid": 
         return templates.TemplateResponse("forbid.html", {"request": request})
     dbTasks = db.getTasks(user.username)
     if dbTasks != tasks:
         acknowledgement = db.syncTasks(tasks, username=user.username)
         if acknowledgement:
-            return status.HTTP_200_OK
+            return {"message": "Tasks synced successfully", "status": status.HTTP_200_OK}
         else:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to sync tasks")
-    return status.HTTP_200_OK
+    return {"message": "Tasks already synced", "status": status.HTTP_208_ALREADY_REPORTED}
 
 
+@app.get("/get-tasks")
+def retrieveTasks(user: Annotated[User, Depends(get_current_user)]):
+    """
+    Retrieves the tasks for a given user from the database.
 
+    Args:
+        user (User): The User object containing the user's information.
 
+    Returns:
+        List[Task]: A list of Task objects associated with the user. Returns an empty list if no tasks are found.
+
+    Raises:
+        HTTPException: If the user is forbidden.
+    """
+    if user.role == "forbid": 
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    tasks = db.getTasks(user.username)
+    # if no tasks found then return an empty list
+    if tasks is None:
+        return []
+    return tasks

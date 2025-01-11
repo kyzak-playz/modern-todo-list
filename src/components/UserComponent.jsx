@@ -3,33 +3,78 @@ import useUser from './UserContext'
 
 const UserComponent = () => {
 
+
+
+    let intervalid;
+
     // retrieve token and token type from sesssion storage 
     const userToken = JSON.parse(sessionStorage.getItem('userToken'))
-    const tokenType = userToken.tokenType;
-    const accessToken = userToken.accessToken
+    const tokenType = userToken.token_type;
+    const accessToken = userToken.access_token
+
+    // on login, check and sync tasks from database only once
     useEffect(() => {
-        const intervalid = setInterval(() => {
+        if (userToken && (JSON.parse(localStorage.getItem('tasks')) == null || JSON.parse(localStorage.getItem('tasks')).length == 0)) {
+            const response = fetch("http://127.0.0.1:8000/get-tasks",
+                {
+                    method: "POST",
+                    headers: {
+                        'Authorization': `${tokenType} ${accessToken}`
+                    }
+                }
+            )
 
-            // if user is logged in and token is found, only then make sync request
-            if (userToken) {
-                // const response = fetch("http://127.0.0.1:8000/sync-tasks", 
-                //     {
-                //         method: "POST",
-                //         headers: {
-                //            'Authorization': `${tokenType} ${accessToken}`
-                //         },
-                //         body: [JSON.parse(localStorage.getItem('tasks'))]
-                //     }
-                // )
-                // if (response.status != 200){
-                //     console.log(`${response.status} at ${Date.now()}`)
-                // }
-                console.log(JSON.parse(localStorage.getItem('tasks')))
+            if (response.status == 200) {
+                response.json().then((data) => {
+                    if (data != []) {
+                        localStorage.setItem('tasks', JSON.stringify(data))
+                    }
+                })
             }
-        }, 3000);
 
+        }
+    }, [])
+
+    // sync tasks every 3 seconds
+    useEffect(() => {
+        if (userToken) {
+            intervalid = setInterval(() => {
+                // body for sync tasks request
+                const taskBody = localStorage.getItem('tasks')
+
+                // if user is logged in and token is found, only then make sync request
+                fetch("http://127.0.0.1:8000/sync-tasks",
+                    {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${tokenType} ${accessToken}`
+                        },
+                        body: taskBody
+                    }
+                )
+                    .then((response) => {
+                        if (response.status == 401) {
+                            // fetch new token from server and set it in session 
+
+                            // for functionaly and just for now, remove session storage and reload page so the user have to login again and new token will be fetched
+                            sessionStorage.removeItem('userToken')
+                            sessionStorage.removeItem('username')
+                            window.location.reload()
+                        } else {
+                            response.json().then((data) => {
+                                console.log(data)
+                            })
+                        }
+                    })
+            }, 3000);
+        }
+
+        // if intervalid is not null, then clear the interval
         return () => {
-            clearInterval(intervalid)
+            if (intervalid) {
+                clearInterval(intervalid)
+            }
         }
     }, [])
 

@@ -178,7 +178,7 @@ class MongoDBConnection:
             if user_tasks is None:
                 self.task_collection.insert_one({"username": username, "tasks": [task.model_dump() for task in tasks]})
             else:
-                self.task_collection.update_one({"username": username}, {"$push": {"tasks": {"$each": [task.model_dump() for task in tasks]}}})
+                self.task_collection.update_one({"username": username}, {"$set": {"tasks": [task.model_dump() for task in tasks]}})
             return True
         except Exception as e:
             print(e)
