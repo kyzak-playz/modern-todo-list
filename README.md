@@ -4,7 +4,7 @@
 ## A Simple, Modern, and Secure Todo List App
 ---------------------------------------------
 
-[![Modern Todo List](https://img.shields.io/badge/Modern%20Todo%20List- Todo%20List%20Reimagined-blue)](https://github.com/kyzak-playz/modern-todo-list)
+[![Modern Todo List](https://img.shields.io/badge/Modern%20Todo%20List-Todo%20List%20Reimagined-blue)](https://github.com/kyzak-playz/modern-todo-list)
 
 ### Overview
 ------------
@@ -41,7 +41,7 @@ MODERN TODO LIST is a web-based todo list application built with modern technolo
 3. Activate the virtual environment using `source venv/bin/activate` (on Linux/Mac) or `venv\Scripts\activate` (on Windows).
 4. Run `pip install -r requirements.txt` to install the dependencies.
 5. Run `fastapi run dev` to start the development server.
-6. For more details, please refer to the [documentation](https://github.com/kyzak-playz/modern-todo-list/backend/README.md).
+6. For more details, please refer to the [documentation](https://github.com/kyzak-playz/modern-todo-list/backend/Readme.md).
 
 
 ### Contributing
