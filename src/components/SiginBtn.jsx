@@ -6,7 +6,9 @@ import { UserContext } from './UserContext'
 
 const SiginBtn = () => {
     const {user} = useContext(UserContext)
+    // toggle to show sign in page
     const [isSignedIn, setIsSignedIn] = useState(false)
+    // toggle to decide if user is logged in or not
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     useEffect(() => {
         if (user) {

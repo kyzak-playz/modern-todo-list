@@ -1,21 +1,37 @@
 import React, { useRef, useState, useEffect } from 'react'
 import useUser from './UserContext'
+import { use } from 'react';
 
 const UserComponent = () => {
 
 
 
-    let intervalid;
+    const intervalid = useRef(null);
 
     // retrieve token and token type from sesssion storage 
     const userToken = JSON.parse(sessionStorage.getItem('userToken'))
     const tokenType = userToken.token_type;
-    const accessToken = userToken.access_token
+    let accessToken = userToken.access_token;
+
+    // if user is logged in and params include new token after successfull password change then update token
+    useEffect(() => {
+        if (userToken && window.location.href.includes("token")) {
+            const urlToken = window.location.href.split("token=")[1]
+            // if urltoken is undefined then reoload the page
+            if (urlToken == undefined || urlToken == null || urlToken == "") {
+                window.location.reload()
+            }
+            // if token is not undefined then update token and clear the url
+            accessToken = urlToken
+            window.location.href = process.env.HOME_PAGE
+
+        }
+    }, [])
 
     // on login, check and sync tasks from database only once
     useEffect(() => {
         if (userToken && (JSON.parse(localStorage.getItem('tasks')) == null || JSON.parse(localStorage.getItem('tasks')).length == 0)) {
-            const response = fetch("http://127.0.0.1:8000/get-tasks",
+            const response = fetch(`${process.env.BACKEND_URL}/get-tasks`,
                 {
                     method: "POST",
                     headers: {
@@ -38,12 +54,12 @@ const UserComponent = () => {
     // sync tasks every 3 seconds
     useEffect(() => {
         if (userToken) {
-            intervalid = setInterval(() => {
+            intervalid.current = setInterval(() => {
                 // body for sync tasks request
                 const taskBody = localStorage.getItem('tasks')
 
                 // if user is logged in and token is found, only then make sync request
-                fetch("http://127.0.0.1:8000/sync-tasks",
+                fetch(`${process.env.BACKEND_URL}/sync-tasks`,
                     {
                         method: "POST",
                         headers: {
@@ -67,12 +83,12 @@ const UserComponent = () => {
                             })
                         }
                     })
-            }, 3000);
+            }, 5000);
         }
 
         // if intervalid is not null, then clear the interval
         return () => {
-            if (intervalid) {
+            if (intervalid.current) {
                 clearInterval(intervalid)
             }
         }
@@ -103,7 +119,7 @@ const UserComponent = () => {
     }
 
     const handlePass = () => {
-        window.location.href = `http://127.0.0.1:8000/change-password/?token=${accessToken}`
+        window.location.href = `${process.env.BACKEND_URL}/change-password/?token=${accessToken}`
     }
 
     return (

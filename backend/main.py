@@ -73,7 +73,7 @@ class TokenData(BaseModel):
 class FormData(BaseModel):
     old_password: str | None = None
     new_password: str | None = None
-    confirm_password: str | None = None
+    confirm_new_password: str | None = None
 
 
 @app.get("/")
@@ -205,17 +205,17 @@ async def change_password_get(
 @app.post("/change-password-check/")
 async def change_password_check(data: Annotated[FormData, Form()]):
     """
-    Checks the validity of the new and old passwords entered by the user.
+    Checks the form data for changing the user's password.
 
     Args:
-        data (FormData): The form data containing the old password, new password, and confirm new password.
+        data (FormData): The form data containing the old and new passwords.
 
     Returns:
-        dict: A dictionary containing a message indicating whether the entered data is valid or not.
+        dict: A dictionary containing a message and the form data if the form data is valid.
     """
-    if data.old_password is None or data.new_password is None or data.confirm_password is None:
+    if data.old_password is None or data.new_password is None or data.confirm_new_password is None:
         return {"message": "Output without data"}
-    for password in [data.old_password, data.new_password, data.confirm_password]:
+    for password in [data.old_password, data.new_password, data.confirm_new_password]:
         if len(password) == 0:
             return {"message": "empty fields"}
     return {"message": "Output with data", "data": data}
@@ -234,11 +234,13 @@ async def change_password(data: Annotated[FormData, Form()], response: Response,
     Returns:
         dict: A dictionary containing a success message, the new access token, and the updated user information.
     """
+    print(data)
     checkPassword = verify_password(data.old_password, user.password)
     if not checkPassword:
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return {"error": "Old password is incorrect"}
-    if data.new_password != data.confirm_password:
+    if data.new_password != data.confirm_new_password:
+        print(f"new_password: {data.new_password}, confirm_password: {data.confirm_new_password}")
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"error": "New password and confirm password do not match"}
     frontend_url = os.getenv("URL")
@@ -251,13 +253,13 @@ async def change_password(data: Annotated[FormData, Form()], response: Response,
         return {"error": "Failed to update password"}
 
     response.status_code = status.HTTP_200_OK
-    response.headers["Authorization"] = create_access_token(
+    newToken = create_access_token(
         {"sub": user.username},
         expires_delta=timedelta(minutes=ACCESS_TIME_TOKEN_EXPIRES),
     )
     return {
         "message": "Password changed successfully",
-        "url": frontend_url
+        "url": f"{frontend_url}/?token={newToken}"
     }
 
     

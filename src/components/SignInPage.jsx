@@ -7,7 +7,7 @@ import React from 'react'
  * @returns {Promise<Object>} A promise that resolves to an object containing the token type and access token.
  */
 
-const tokenExtract = async (response)=> {
+const tokenExtract = async (response) => {
     const token = await response.json()
     const tokenObject = {
         token_type: token.token_type,
@@ -22,7 +22,7 @@ const SignInPage = ({ onExit, checkLoggedIn }) => {
         const data = new FormData(event.currentTarget)
 
         // create up new user
-        const response = await fetch("http://127.0.0.1:8000/sign_up", {
+        const response = await fetch(`${process.env.BACKEND_URL}/sign_up`, {
             method: "POST",
             body: data,
         })
@@ -30,15 +30,21 @@ const SignInPage = ({ onExit, checkLoggedIn }) => {
         // if user already exist then login
         if (response.status === 409) {
             console.log("user already exist now trying to log in.....")
-            const response = await fetch("http://127.0.0.1:8000/login", {
+            const response = await fetch(`${process.env.BACKEND_URL}/login`, {
                 method: "POST",
                 body: data,
             })
-            
+
             // get new session token for login
             const tokenObject = await tokenExtract(response)
             sessionStorage.setItem('userToken', JSON.stringify(tokenObject));
             sessionStorage.setItem('username', JSON.stringify(data.get('username')));
+
+            // wait 2 seconds and close sign in page
+            setTimeout(() => {
+                onExit()
+                checkLoggedIn()
+            }, 2000)
         }
 
         // get new session token for new user
@@ -46,19 +52,30 @@ const SignInPage = ({ onExit, checkLoggedIn }) => {
             const tokenObject = await tokenExtract(response)
             sessionStorage.setItem('userToken', JSON.stringify(tokenObject));
             sessionStorage.setItem('username', JSON.stringify(data.get('username')));
+
+            // wait 2 seconds and close sign in page
         }
 
-        // wait 3 seconds and close sign in page
-        setTimeout(() => {
-            onExit()
-            checkLoggedIn()
-        }, 3000)
+        // for other status just show alert
+        if (response.status == 401) {
+            const result = await response.json()
+            alert(result.error)
+
+            // wait 2 seconds and close sign in page
+            setTimeout(() => {
+                onExit()
+            }, 2000)
+
+        }
     }
 
     return (
         <div className='fixed inset-0 bg-black/50 backdrop-blur-lg flex items-center justify-center'>
             <div className='bg-black p-8 rounded-lg w-96'>
-                <h2 className='text-lg font-bold mb-4'>Sign In</h2>
+                <div className='flex justify-between items-center'>
+                    <h2 className='text-lg font-bold mb-4'>Sign In</h2>
+                    <h2 onClick={onExit} className='text-lg font-bold mb-4 cursor-pointer'>X</h2>
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div className='mb-2'>
                         <label htmlFor="username" className='block mb-1'>Email</label>

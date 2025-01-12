@@ -1,14 +1,60 @@
-# React + Vite
+# MODERN TODO LIST
+=====================
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## A Simple, Modern, and Secure Todo List App
+---------------------------------------------
 
-Currently, two official plugins are available:
+[![Modern Todo List](https://img.shields.io/badge/Modern%20Todo%20List- Todo%20List%20Reimagined-blue)](https://github.com/kyzak-playz/modern-todo-list)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Overview
+------------
+
+MODERN TODO LIST is a web-based todo list application built with modern technologies. It's designed to be simple, intuitive, and secure. With MODERN TODO LIST, you can create and manage your todo lists without creating an account. However, if you choose to create an account, your data will be stored securely on our database, and you can access your todo lists from any device.
+
+### Features
+------------
+
+* **Modern Design**: Built with a modern design approach, MODERN TODO LIST provides a clean and intuitive user interface.
+* **Authentication**: Create an account to store your todo lists securely on our database.
+* **Cross-Device Syncing**: Access your todo lists from any device, at any time.
+* **No Account Required**: Use MODERN TODO LIST without creating an account.
+
+### Tech Stack
+-------------
+
+* **Frontend**: Built with React 18.3.1, Vite 5.4.10, and Tailwind CSS 3.4.14.
+* **Backend**: Built with FastAPI 0.115.4, MongoDB, and other dependencies like PyMongo, Python-Dotenv, Bcrypt, and PyJWT.
+
+### Getting Started
+-------------------
+
+#### Frontend
+
+1. Navigate to the root directory of the project.
+2. Run `npm install` to install the dependencies.
+3. Run `npm run dev` to start the development server.
+
+#### Backend
+
+1. Navigate to the `backend` directory.
+2. Create a new virtual environment using `python -m venv venv`.
+3. Activate the virtual environment using `source venv/bin/activate` (on Linux/Mac) or `venv\Scripts\activate` (on Windows).
+4. Run `pip install -r requirements.txt` to install the dependencies.
+5. Run `fastapi run dev` to start the development server.
+6. For more details, please refer to the [documentation](https://github.com/kyzak-playz/modern-todo-list/backend/README.md).
 
 
+### Contributing
+---------------
 
-# GitHub Link
+MODERN TODO LIST is a hobby project that can be considered open-source. If you'd like to contribute, please fork the repository, make changes, and submit a pull request. I'll review your changes and give you full credits for your contributions.
 
-Link = git@github.com:kyzak-playz/modern-todo-list.git
+### Acknowledgments
+------------------
+
+I'd like to thank myself for building this project from scratch. It's been a fun and challenging experience, and I'm proud of what I've accomplished.
+
+### License
+----------
+
+MODERN TODO LIST is licensed under the MIT License. See [LICENSE](LICENSE) for details.
