@@ -22,7 +22,7 @@ const SignInPage = ({ onExit, checkLoggedIn }) => {
         const data = new FormData(event.currentTarget)
 
         // create up new user
-        const response = await fetch(`${process.env.BACKEND_URL}/sign_up`, {
+        const response = await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/sign_up`, {
             method: "POST",
             body: data,
         })
@@ -30,21 +30,36 @@ const SignInPage = ({ onExit, checkLoggedIn }) => {
         // if user already exist then login
         if (response.status === 409) {
             console.log("user already exist now trying to log in.....")
-            const response = await fetch(`${process.env.BACKEND_URL}/login`, {
+            const response = await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/login`, {
                 method: "POST",
                 body: data,
             })
 
-            // get new session token for login
-            const tokenObject = await tokenExtract(response)
-            sessionStorage.setItem('userToken', JSON.stringify(tokenObject));
-            sessionStorage.setItem('username', JSON.stringify(data.get('username')));
+            // if password is incorrect or not authorised
+            if (response.status == 401) {
+                const result = await response.json()
+                console.log(result)
+                alert(result.detail)
 
-            // wait 2 seconds and close sign in page
-            setTimeout(() => {
-                onExit()
-                checkLoggedIn()
-            }, 2000)
+                // wait 2 seconds and close sign in page
+                setTimeout(() => {
+                    onExit()
+                }, 2000)
+
+            } else {
+
+                // get new session token for login
+                const tokenObject = await tokenExtract(response)
+                sessionStorage.setItem('userToken', JSON.stringify(tokenObject));
+                sessionStorage.setItem('username', JSON.stringify(data.get('username')));
+
+                // wait 2 seconds and close sign in page
+                setTimeout(() => {
+                    onExit()
+                    checkLoggedIn()
+                }, 2000)
+            }
+
         }
 
         // get new session token for new user
@@ -57,16 +72,11 @@ const SignInPage = ({ onExit, checkLoggedIn }) => {
         }
 
         // for other status just show alert
-        if (response.status == 401) {
+        if (response.status != 200 && response.status != 401 && response.status != 409) {
             const result = await response.json()
-            alert(result.error)
-
-            // wait 2 seconds and close sign in page
-            setTimeout(() => {
-                onExit()
-            }, 2000)
-
+            alert(result.detail)
         }
+
     }
 
     return (

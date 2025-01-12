@@ -23,7 +23,7 @@ const UserComponent = () => {
             }
             // if token is not undefined then update token and clear the url
             accessToken = urlToken
-            window.location.href = process.env.HOME_PAGE
+            window.location.href = import.meta.env.VITE_APP_HOME_PAGE
 
         }
     }, [])
@@ -31,7 +31,7 @@ const UserComponent = () => {
     // on login, check and sync tasks from database only once
     useEffect(() => {
         if (userToken && (JSON.parse(localStorage.getItem('tasks')) == null || JSON.parse(localStorage.getItem('tasks')).length == 0)) {
-            const response = fetch(`${process.env.BACKEND_URL}/get-tasks`,
+            const response = fetch(`${import.meta.env.BACKEND_URL}/get-tasks`,
                 {
                     method: "POST",
                     headers: {
@@ -59,7 +59,7 @@ const UserComponent = () => {
                 const taskBody = localStorage.getItem('tasks')
 
                 // if user is logged in and token is found, only then make sync request
-                fetch(`${process.env.BACKEND_URL}/sync-tasks`,
+                fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/sync-tasks`,
                     {
                         method: "POST",
                         headers: {
@@ -119,7 +119,7 @@ const UserComponent = () => {
     }
 
     const handlePass = () => {
-        window.location.href = `${process.env.BACKEND_URL}/change-password/?token=${accessToken}`
+        window.location.href = `${import.meta.env.VITE_APP_BACKEND_URL}/change-password/?token=${accessToken}`
     }
 
     return (
