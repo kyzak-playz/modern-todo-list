@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import useUser from './UserContext'
-import { use } from 'react';
+import { data } from 'autoprefixer';
 
 const UserComponent = () => {
 
@@ -30,28 +30,35 @@ const UserComponent = () => {
 
     // on login, check and sync tasks from database only once
     useEffect(() => {
-        if (userToken && (JSON.parse(localStorage.getItem('tasks')) == null || JSON.parse(localStorage.getItem('tasks')).length == 0)) {
-            const response = fetch(`${import.meta.env.BACKEND_URL}/get-tasks`,
+        //  user is logged in through other device
+        if (userToken && (JSON.parse(localStorage.getItem('tasks')) == null || JSON.parse(localStorage.getItem('tasks')).length == 0 || JSON.parse(localStorage.getItem('tasks')) == [])) {
+            console.log("user is logged in through other device")
+            fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/get-tasks`,
                 {
-                    method: "POST",
+                    method: "GET",
                     headers: {
+                        "Accept": "application/json",
                         'Authorization': `${tokenType} ${accessToken}`
                     }
                 }
             )
-
-            if (response.status == 200) {
-                response.json().then((data) => {
-                    if (data != []) {
-                        localStorage.setItem('tasks', JSON.stringify(data))
+                .then((response) => {
+                    // IF SOMETHINHG UNEXPECTED HAPPENED
+                    if (response.status != 200) {
+                        throw new Error('Failed to fetch tasks')
                     }
+                    // else return tasks
+                    response.json().then(data => {
+                        // set tasks in localstorage
+                        localStorage.setItem('tasks', JSON.stringify(data))
+                        // reload page to populate tasks
+                        window.location.reload();
+                    })
                 })
-            }
-
         }
     }, [])
 
-    // sync tasks every 3 seconds
+    // sync tasks every 5 seconds
     useEffect(() => {
         if (userToken) {
             intervalid.current = setInterval(() => {

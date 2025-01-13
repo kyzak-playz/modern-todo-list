@@ -38,13 +38,7 @@ const SignInPage = ({ onExit, checkLoggedIn }) => {
             // if password is incorrect or not authorised
             if (response.status == 401) {
                 const result = await response.json()
-                console.log(result)
                 alert(result.detail)
-
-                // wait 2 seconds and close sign in page
-                setTimeout(() => {
-                    onExit()
-                }, 2000)
 
             } else {
 
