@@ -1,4 +1,3 @@
-import React from 'react'
 
 /**
  * Extracts and returns a token object from the API response.

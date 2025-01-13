@@ -1,11 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react'
-import useUser from './UserContext'
-import { data } from 'autoprefixer';
+import { useRef, useState, useEffect } from 'react'
+import {useUser} from './UserContext'
 
 const UserComponent = () => {
-
-
-
+    
     const intervalid = useRef(null);
 
     // retrieve token and token type from sesssion storage 

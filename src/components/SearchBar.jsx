@@ -1,6 +1,4 @@
 // search bar
-import React from 'react'
-
 const SearchBar = ({ searchTerm, onSearch }) => {
     return (
         <div className='w-1/3'>

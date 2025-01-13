@@ -1,5 +1,5 @@
 // button 
-import React, { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import SignInPage from './SignInPage'
 import UserComponent from './UserComponent'
 import { UserContext } from './UserContext'
@@ -10,10 +10,11 @@ const SiginBtn = () => {
     const [isSignedIn, setIsSignedIn] = useState(false)
     // toggle to decide if user is logged in or not
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+
     useEffect(() => {
         if (user) {
             setIsLoggedIn(true) }
-    })
+    }, [user])
     return (
         <>
             {!isSignedIn && !isLoggedIn && (

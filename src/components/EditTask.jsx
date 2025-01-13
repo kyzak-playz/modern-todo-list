@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import{ useState } from "react"
 
 const EditTask = ({tasks, onSave, onClose}) => {
     const [title, setTitle] = useState(tasks.title)

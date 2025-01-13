@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import SearchBar from './components/SearchBar'
 import Logo from './components/Logo'
 import SiginBtn from './components/SiginBtn'
