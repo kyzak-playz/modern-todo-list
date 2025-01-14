@@ -44,7 +44,6 @@ class MongoDBConnection:
         self.db = self.client["todo-app"]
         self.user_collection = self.db["userInfo"]
         self.task_collection = self.db["userTasks"]
-        print("Connected to MongoDB")
 
     def close(self):
         """

@@ -1,3 +1,8 @@
+import os
+from dotenv import load_dotenv
+# load environment variables from .env file
+load_dotenv()
+
 from typing import Annotated
 import jwt
 from jwt.exceptions import InvalidTokenError
@@ -13,7 +18,6 @@ from fastapi import (
     HTTPException,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -21,19 +25,18 @@ from fastapi.responses import HTMLResponse
 from utility.token import create_access_token, verify_password, get_password_hash
 from pydantic import BaseModel
 from datetime import timedelta
-from time import sleep
 from dB.connection import MongoDBConnection, User, Task
-from dotenv import load_dotenv
-import os
 
-# Load environment variables
-env = os.getenv("ENV", "development")
+
+
+
+
 # Connect to MongoDB
 db = MongoDBConnection()
 # Set the access token expiration time
 ACCESS_TIME_TOKEN_EXPIRES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
-# Load environment variables
-load_dotenv(f".env{'' if env == 'production' else '.local'}")
+
+
 
 # Create the FastAPI app
 app = FastAPI()
@@ -97,7 +100,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     Raises:
         HTTPException: If the token is invalid.
     """
-    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -235,13 +237,11 @@ async def change_password(data: Annotated[FormData, Form()], response: Response,
     Returns:
         dict: A dictionary containing a success message, the new access token, and the updated user information.
     """
-    print(data)
     checkPassword = verify_password(data.old_password, user.password)
     if not checkPassword:
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return {"error": "Old password is incorrect"}
     if data.new_password != data.confirm_new_password:
-        print(f"new_password: {data.new_password}, confirm_password: {data.confirm_new_password}")
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"error": "New password and confirm password do not match"}
     frontend_url = os.getenv("URL")
